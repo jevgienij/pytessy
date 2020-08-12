@@ -315,10 +315,11 @@ class PyTessy(object):
                     break
             if data_path is None:
                 raise FileNotFoundError('PyTessy: Couldn\'t find "tessdata" directory.')
+        origPath = getcwd()
         chdir(tess_path)
         self._tess = TesseractHandler(lib_path=lib_path, data_path=data_path,
                                       language=language)
-        chdir(run_path)
+        chdir(origPath)
 
 
 
