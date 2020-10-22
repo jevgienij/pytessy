@@ -2,6 +2,54 @@
 
 This module allows faster access to Tesseract-OCR from Python scripts.
 
+## Quick start
+This repo has been altered from hyperrixel's pytessy: https://github.com/hyperrixel/pytessy
+It adds two quick 'hacks' to enable more functionality.
+
+* Allows pytessy to be used within a Jupyter notebook
+* Allows using pytessy on Linux
+
+Note that you may need to import pytessy before/after importing numpy, as there seems to be something conflicting when importing in a certain order.
+
+On linux, install tesseract and get the trained data.
+```bash
+sudo apt install tesseract-ocr
+wget https://github.com/tesseract-ocr/tessdata/raw/master/eng.traineddata
+sudo mkdir /usr/share/tessdata/ 
+sudo mv eng.traineddata /usr/share/tessdata/
+```
+Run the example usage script.
+```bash
+python3 exampleUsage.py
+```
+Or run the following
+```python
+from source import pytessy
+from PIL import ImageFilter, Image
+
+# Create pytessy instance
+ocrReader = pytessy.PyTessy()
+
+files = ["testImages/testWord.png", "testImages/5.4321.png"]
+
+for file in files:
+    # Load Image
+    img = Image.open(file)
+
+    # Scale up image
+    w, h = img.size
+    img = img.resize((2 * w, 2 * h))
+    # Sharpen image
+    img = img.filter(ImageFilter.SHARPEN)
+    # Convert to ctypes
+    imgBytes = img.tobytes()
+    bytesPerPixel = int(len(imgBytes) / (img.width * img.height))
+    # Use OCR on Image
+    imageStr = ocrReader.read(img.tobytes(), img.width, img.height, bytesPerPixel, raw=True, resolution=600)
+
+    print(file, imageStr)
+```
+
 ## Why and when is it so fast?
 
 PyTessy uses direct library-level access to Tesseract-OCR's core library. Therefore is it so fast in case when the image is already in the memory or when the image need to be processed before scanning with Tesseract-OCR. In case of reading and scanning existing files only PyTessy is just a bit faster than usual Tesseract-OCR Python wrappers.

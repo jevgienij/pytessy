@@ -34,6 +34,7 @@ import ctypes.util
 from os import chdir, environ, getcwd
 from os.path import abspath, dirname, isabs, isdir, isfile, join
 from sys import platform
+from distutils.spawn import find_executable
 
 
 
@@ -297,7 +298,12 @@ class PyTessy(object):
                 if lib_path is None:
                     raise FileNotFoundError('Cannot locate Tesseract-OCR library.')
             elif platform.startswith('linux'):
-                raise NotImplementedError('PyTessy: Library search on Linux is not implemented yet.')
+                findProgram = find_executable('tesseract')
+                if len(findProgram) == 0:
+                    raise FileNotFoundError('Cannot locate Tesseract-OCR library.')
+                else:
+                    lib_path = 'tesseract'
+                    data_path = "/usr/share/tessdata/"
             elif platform.startswith('darwin'):
                 raise NotImplementedError('PyTessy: Library search on MacOS is not implemented yet.')
             else:
