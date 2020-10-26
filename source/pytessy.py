@@ -155,6 +155,23 @@ class TesseractHandler(object):
         self._check_setup()
         self._lib.TessBaseAPISetPageSegMode(self._api, psm)
 
+    def set_variable(self, key, val):
+        """
+        Set the value of an internal parameter.
+        Supply the name of the parameter and the value as a string, just as
+        you would in a config file.
+        Eg set_variable("tessedit_char_blacklist", "xyz"); to ignore x, y and z.
+        Or set_variable("classify_bln_numeric_mode", "1"); to set numeric-only mode.
+        SetVariable may be used before Init, but settings will revert to
+        defaults on End().
+        @Params: key (str) Variable name
+                 val (str) Variable value
+        @Return: (bool) ``False`` if the name lookup failed.
+        """
+
+        self._check_setup()
+        return self._lib.TessBaseAPISetVariable(self._api, key.encode('ascii'), val.encode('ascii'))
+
     @classmethod
     def setup_lib(cls, lib_path=None):
         """
@@ -198,6 +215,11 @@ class TesseractHandler(object):
         lib.TessBaseAPISetPageSegMode.restype = None
         lib.TessBaseAPISetPageSegMode.argtypes = (cls.TessBaseAPI,  # handle
                                                   ctypes.c_int)     # mode
+
+        lib.TessBaseAPISetVariable.restype = ctypes.c_bool
+        lib.TessBaseAPISetVariable.argtypes = (cls.TessBaseAPI,  # handle
+                                               ctypes.c_char_p,  # name
+                                               ctypes.c_char_p)  # value
 
     def _check_setup(self):
         """
@@ -450,6 +472,21 @@ class PyTessy(object):
         @Params: psm (int) Page Segmentation Mode, as per TessPageSegMode enum
         """
         self._tess.set_psm(psm)
+
+    def set_variable(self, key, val):
+        """
+        Set the value of an internal parameter.
+        Supply the name of the parameter and the value as a string, just as
+        you would in a config file.
+        Eg set_variable("tessedit_char_blacklist", "xyz"); to ignore x, y and z.
+        Or set_variable("classify_bln_numeric_mode", "1"); to set numeric-only mode.
+        SetVariable may be used before Init, but settings will revert to
+        defaults on End().
+        @Params: key (str) Variable name
+                 val (str) Variable value
+        @Return: (bool) ``False`` if the name lookup failed.
+        """
+        return self._tess.set_variable(key, val)
 
 
 if __name__ == '__main__':
