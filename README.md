@@ -24,7 +24,7 @@ python3 exampleUsage.py
 ```
 Or run the following
 ```python
-from source import pytessy
+from src import pytessy
 from PIL import ImageFilter, Image
 
 # Create pytessy instance

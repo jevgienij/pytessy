@@ -1,10 +1,5 @@
-from source import pytessy
+import pytessy
 from PIL import ImageFilter, Image
-
-
-
-
-
 
 if __name__ == "__main__":
 
